@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-W0V5JY6G1C"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-W0V5JY6G1C');
+</script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tải Video YouTube - Chuyển đổi YouTube sang MP4, MP3 Miễn Phí - SnapYT</title>
+  <meta name="description" content="Trình tải video YouTube trực tuyến giúp tải YouTube sang MP4, MP3 miễn phí. Nhanh chóng, an toàn và không cần đăng ký. Công cụ tải YouTube tốt nhất." />
+  <meta name="keywords" content="tải video youtube, chuyển đổi youtube sang mp4, youtube sang mp3, tải youtube mp3, snapyt, tải nhạc youtube, youtube downloader việt nam" />
+  <meta name="robots" content="index, follow" />
+  
+  <meta property="og:title" content="Tải Video YouTube Miễn Phí - SnapYT" />
+  <meta property="og:description" content="Tải YouTube sang MP4, MP3 tốc độ cao, an toàn và không giới hạn." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://snapyt2mp4.click/vi" />
+  <meta property="og:image" content="https://snapyt2mp4.click/favicon.png" />
+  <meta property="og:site_name" content="SnapYT Viet Nam" />
+  
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Tải Video YouTube Miễn Phí" />
+  <meta name="twitter:description" content="Tải YouTube sang MP4, MP3 tốc độ cao và an toàn." />
+  
+  <link rel="canonical" href="https://snapyt2mp4.click/vi" />
+  <link rel="alternate" hreflang="en" href="https://snapyt2mp4.click/en" />
+  <link rel="alternate" hreflang="vi" href="https://snapyt2mp4.click/vi" />
+  <link rel="alternate" hreflang="x-default" href="https://snapyt2mp4.click/en" />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=DM+Mono:wght@400&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="stylesheet" href="/styles/style.css" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "SnapYT YouTube Downloader",
+    "url": "https://snapyt2mp4.click/vi",
+    "description": "Trình tải video YouTube trực tuyến miễn phí sang MP4 và MP3.",
+    "applicationCategory": "MultimediaApplication",
+    "operatingSystem": "All",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "VND" }
+  }
+  </script>
+  <script src="https://pl28964747.profitablecpmratenetwork.com/87/03/5b/87035b4fb4d64e4c40731b0e2e6a6871.js"></script>
+</head>
+<body>
+
+<nav>
+  <div class="logo">
+    <div style="background: var(--accent); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+    </div>
+    SNAP<span>YT</span>
+  </div>
+  <div class="nav-links">
+    <a href="/youtube-to-mp4">Tải Video MP4</a>
+    <a href="/youtube-to-mp3">Tải Nhạc MP3</a>
+    <div style="display: inline-block; position: relative;">
+      <button class="lang-btn" onclick="document.getElementById('lang-drop').toggleAttribute('hidden')">🌐 Tiếng Việt ▾</button>
+      <div id="lang-drop" hidden style="position: absolute; top: 100%; right: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; z-index: 100; min-width: 120px;">
+        <a href="/en" style="display: block; padding: 10px; margin: 0; border-bottom: 1px solid var(--border);">English</a>
+        <a href="/vi" style="display: block; padding: 10px; margin: 0;">Tiếng Việt</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<header>
+  <h1>Công cụ tải <span>Video</span><br>YouTube</h1>
+  <p>Cách nhanh nhất để tải video YouTube sang MP4 và MP3 hoàn toàn miễn phí. Chỉ cần dán đường dẫn và lưu video yêu thích của bạn.</p>
+  
+  <div class="search-box">
+    <input type="text" id="urlInput" placeholder="Dán link YouTube tại đây..." />
+    <button id="fetchBtn" onclick="fetchInfo()">Bắt đầu</button>
+  </div>
+  <p style="color: var(--muted); font-size: 13px; margin-top: 15px;">Bằng việc sử dụng dịch vụ, bạn đã chấp nhận <a href="/terms" style="color: var(--accent); text-decoration: none;">Điều khoản sử dụng</a> của chúng tôi.</p>
+  <div id="error" style="color: #ff4a4a; margin-top: 15px; display: none;"></div>
+</header>
+
+<div class="main-content">
+  <div id="loader" style="display: none; text-align: center; padding: 40px;">
+    <p>⚡ Đang lấy thông tin video...</p>
+  </div>
+
+  <div id="result">
+    <div class="video-card">
+      <img id="vthumb" src="" alt="Thumbnail" />
+      <div class="video-info">
+        <h3 id="vtitle">Tiêu đề video</h3>
+        <p id="vauthor"></p>
+        <p id="vduration"></p>
+      </div>
+    </div>
+
+    <div class="download-sections">
+      <div>
+        <div class="section-title">Video (MP4)</div>
+        <div class="format-grid" id="videoFormats"></div>
+      </div>
+      <div>
+        <div class="section-title">Âm thanh (MP3)</div>
+        <div class="format-grid" id="audioSection"></div>
+      </div>
+    </div>
+  </div>
+
+  <section class="seo-article">
+    <h2>Trình tải Video YouTube Miễn phí & Nhanh chóng - SnapYT</h2>
+    <p>SnapYT là công cụ trực tuyến hàng đầu hỗ trợ chuyển đổi và tải video YouTube sang định dạng MP4 hoặc MP3 với chất lượng HD sắc nét. Dịch vụ của chúng tôi hoàn toàn miễn phí, tốc độ cao và đặc biệt không yêu cầu cài đặt phần mềm hay đăng ký tài khoản. Bạn có thể lưu lại những video yêu thích với nhiều tùy chọn độ phân giải từ 360p, 720p, 1080p cho đến chất lượng 4K đỉnh cao. Với nhu cầu tải nhạc, SnapYT hỗ trợ các định dạng âm thanh chất lượng tốt nhất như 128kbps, 256kbps và 320kbps.</p>
+    
+    <p>SnapYT tương thích hoàn hảo với mọi thiết bị hiện đại từ Android, iOS đến Windows và macOS. Chúng tôi ứng dụng công nghệ xử lý tiên tiến nhất để đảm bảo quá trình chuyển đổi diễn ra ngay lập tức, giúp bạn tiết kiệm thời gian chờ đợi. Mọi tệp tin được tải qua SnapYT đều được kiểm duyệt an toàn, không chứa mã độc hay virus, mang lại trải nghiệm tin cậy tuyệt đối.</p>
+
+    <div class="features-grid">
+      <div class="f-item">
+        <h4>⚡ Tải không giới hạn</h4>
+        <p>Chuyển đổi và tải bao nhiêu video tùy thích, hoàn toàn 0 đồng.</p>
+      </div>
+      <div class="f-item">
+        <h4>🚀 Tốc độ siêu tốc</h4>
+        <p>Hệ thống tối ưu giúp xử lý các video 4K dung lượng lớn chỉ trong vài giây.</p>
+      </div>
+      <div class="f-item">
+        <h4>🛡️ Tuyệt đối an toàn</h4>
+        <p>Bảo vệ quyền riêng tư của bạn, không thu thập dữ liệu cá nhân hay yêu cầu đăng nhập.</p>
+      </div>
+    </div>
+
+    <h2>Hướng dẫn tải video YouTube bằng SnapYT</h2>
+    <p>1. <strong>Dán đường dẫn</strong>: Sao chép URL video YouTube và dán vào ô tìm kiếm phía trên.</p>
+    <p>2. <strong>Xử lý</strong>: Nhấn nút "Bắt đầu" và chờ hệ thống hiển thị danh sách định dạng.</p>
+    <p>3. <strong>Tải về</strong>: Chọn chất lượng bạn mong muốn và nhấn "TẢI VỀ" để lưu vào thiết bị.</p>
+
+    <div class="faq-section" id="faq">
+      <h2>Câu hỏi thường gặp (FAQ)</h2>
+      <div class="faq-item">
+        <h3>SnapYT là gì?</h3>
+        <p>SnapYT là công cụ web an toàn giúp bạn tải video và nhạc từ YouTube với chất lượng cao nhất một cách dễ dàng và hoàn toàn miễn phí.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Sử dụng SnapYT có mất phí không?</h3>
+        <p>Không, dịch vụ của chúng tôi miễn phí 100%. Bạn không cần trả bất kỳ khoản phí nào để tải MP3 hay MP4 từ YouTube.</p>
+      </div>
+      <div class="faq-item">
+        <h3>SnapYT có hỗ trợ tải 4K không?</h3>
+        <p>Có, chúng tôi hỗ trợ tải lên tới độ phân giải 4K nếu video gốc có cung cấp chất lượng đó.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Tôi có cần tạo tài khoản không?</h3>
+        <p>Không cần. Bạn có thể sử dụng SnapYT ngay lập tức mà không cần khai báo bất kỳ thông tin cá nhân nào.</p>
+      </div>
+    </div>
+
+    <div style="margin-top: 40px; font-size: 13px; color: var(--muted); border: 1px solid var(--border); padding: 20px; border-radius: 10px;">
+       <strong>Nếu không thể tải trực tiếp về máy, hãy làm theo các bước:</strong><br>
+       Bước 1: Chọn định dạng và nhấn Tải về.<br>
+       Bước 2: Trong cửa sổ mới, nhấn "CTRL + S" để lưu hoặc chuột phải vào video chọn "Lưu video thành...".
+    </div>
+  </section>
+</div>
+
+<!-- DOWNLOAD OVERLAY -->
+<div class="overlay" id="dlOverlay">
+  <div class="overlay-content" style="position: relative;">
+    <button onclick="document.getElementById('dlOverlay').classList.remove('active'); if(typeof isDownloading !== 'undefined') isDownloading = false;" style="position: absolute; right: 15px; top: 15px; background: transparent; border: none; font-size: 24px; color: var(--muted); cursor: pointer;">&times;</button>
+    <h2 id="ovTitle">Đang xử lý...</h2>
+    <p id="ovSub" style="color: var(--muted); margin: 15px 0;">Vui lòng chờ trong khi chúng tôi chuẩn bị tệp của bạn.</p>
+    <div style="height: 6px; background: var(--border); border-radius: 10px; overflow: hidden; margin: 20px 0;">
+      <div id="progBar" style="width: 0%; height: 100%; background: var(--accent); transition: 0.3s;"></div>
+    </div>
+    
+    <!-- Sponsor Ad in Processing Overlay -->
+    <a href="https://www.profitablecpmratenetwork.com/pczup5wwv5?key=db047e465fbcc98ebed7e03391257f5f" target="_blank" style="display: block; background: rgba(237,53,53,0.1); border: 1px dashed var(--accent); padding: 15px; border-radius: 10px; text-decoration: none; margin-bottom: 20px; font-size: 13px;">
+      <strong style="color: var(--accent); display: block; margin-bottom: 5px;">🌟 Nhà Tài Trợ</strong>
+      <span style="color: var(--muted);">Nhấp vào đây để xem quảng cáo ủng hộ SnapYT trong lúc chờ.</span>
+    </a>
+
+    <div id="dlAction" style="display: none;">
+      <button onclick="triggerActualDownload()" style="background: var(--accent); color: #fff; border: none; padding: 12px 30px; border-radius: 10px; font-weight: 700; cursor: pointer; width: 100%;">Tải ngay</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div style="margin-bottom: 20px;">
+    <a href="/about">Về chúng tôi</a> | 
+    <a href="#faq">Hỏi đáp</a> | 
+    <a href="/contact">Liên hệ</a> | 
+    <a href="/terms">Điều khoản</a> | 
+    <a href="/privacy">Quyền riêng tư</a>
+  </div>
+  <p>&copy; 2026 SnapYT - Trình tải YouTube tốt nhất. Mọi quyền được bảo lưu.</p>
+</footer>
+
+<script src="/scripts/main.js"></script>
+</body>
+</html>

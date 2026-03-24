@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-W0V5JY6G1C"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-W0V5JY6G1C');
+</script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YouTube Video Downloader - Download YouTube to MP4, MP3 Free - SnapYT</title>
+  <meta name="description" content="Online YouTube video downloader to download YouTube to MP4, MP3 for free. Fast, safe and no registration needed. Best YouTube to MP3 converter." />
+  <meta name="keywords" content="youtube video downloader, youtube to mp4, youtube to mp3, youtube converter, download youtube videos, free youtube downloader, snapyt" />
+  <meta name="robots" content="index, follow" />
+  
+  <meta property="og:title" content="YouTube Video Downloader - Download MP4 & MP3 - SnapYT" />
+  <meta property="og:description" content="Download YouTube to MP4, MP3 for free. Fast, safe and no registration needed." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://snapyt2mp4.click/en" />
+  <meta property="og:image" content="https://snapyt2mp4.click/favicon.png" />
+  <meta property="og:site_name" content="SnapYT" />
+  
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="YouTube Video Downloader - SnapYT" />
+  <meta name="twitter:description" content="Fast and free YouTube to MP4, MP3 converter." />
+  
+  <link rel="canonical" href="https://snapyt2mp4.click/en" />
+  <link rel="alternate" hreflang="vi" href="https://snapyt2mp4.click/vi" />
+  <link rel="alternate" hreflang="en" href="https://snapyt2mp4.click/en" />
+  <link rel="alternate" hreflang="x-default" href="https://snapyt2mp4.click/en" />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=DM+Mono:wght@400&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="stylesheet" href="/styles/style.css" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "SnapYT YouTube Downloader",
+    "url": "https://snapyt2mp4.click/",
+    "description": "Free online YouTube video downloader to download YouTube to MP4 and MP3.",
+    "applicationCategory": "MultimediaApplication",
+    "operatingSystem": "All",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
+  <script src="https://pl28964747.profitablecpmratenetwork.com/87/03/5b/87035b4fb4d64e4c40731b0e2e6a6871.js"></script>
+</head>
+<body>
+
+<nav>
+  <div class="logo">
+    <div style="background: var(--accent); width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+    </div>
+    SNAP<span>YT</span>
+  </div>
+  <div class="nav-links">
+    <a href="/youtube-to-mp4">YouTube to MP4 Converter</a>
+    <a href="/youtube-to-mp3">YouTube to MP3 Converter</a>
+    <div style="display: inline-block; position: relative;">
+      <button class="lang-btn" onclick="document.getElementById('lang-drop').toggleAttribute('hidden')">🌐 English ▾</button>
+      <div id="lang-drop" hidden style="position: absolute; top: 100%; right: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; z-index: 100; min-width: 120px;">
+        <a href="/en" style="display: block; padding: 10px; margin: 0; border-bottom: 1px solid var(--border);">English</a>
+        <a href="/vi" style="display: block; padding: 10px; margin: 0;">Tiếng Việt</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<header>
+  <h1>YouTube <span>Video</span><br>Downloader</h1>
+  <p>The fastest way to download YouTube videos to MP4 and MP3 for free. Just paste the link and save your favorites.</p>
+  
+  <div class="search-box">
+    <input type="text" id="urlInput" placeholder="Paste YouTube link here..." />
+    <button id="fetchBtn" onclick="fetchInfo()">Start</button>
+  </div>
+  <p style="color: var(--muted); font-size: 13px; margin-top: 15px;">By using our service you are accepting our <a href="/terms" style="color: var(--accent); text-decoration: none;">Terms of Use</a>.</p>
+  <div id="error" style="color: #ff4a4a; margin-top: 15px; display: none;"></div>
+</header>
+
+<div class="main-content">
+  <div id="loader" style="display: none; text-align: center; padding: 40px;">
+    <p>⚡ Fetching video data...</p>
+  </div>
+
+  <div id="result">
+    <div class="video-card">
+      <img id="vthumb" src="" alt="Thumbnail" />
+      <div class="video-info">
+        <h3 id="vtitle">Video Title</h3>
+        <p id="vauthor"></p>
+        <p id="vduration"></p>
+      </div>
+    </div>
+
+    <div class="download-sections">
+      <div>
+        <div class="section-title">Video (MP4)</div>
+        <div class="format-grid" id="videoFormats"></div>
+      </div>
+      <div>
+        <div class="section-title">Audio (MP3)</div>
+        <div class="format-grid" id="audioSection"></div>
+      </div>
+    </div>
+  </div>
+
+  <section class="seo-article">
+    <h2>Free Premium YouTube Video Downloader - SnapYT</h2>
+    <p>SnapYT is the ultimate online platform for converting and downloading YouTube content directly to MP4 or MP3 in high definition. Our tool is designed for speed and reliability, requiring no additional software or registration. Whether you want a video in 720p, 1080p, or even cinematic 4K, SnapYT handles it effortlessly. Audiophiles can also enjoy MP3 downloads at various bitrates including 128kbps, 256kbps, and 320kbps for crystal-clear sound.</p>
+    
+    <p>Our downloader is fully compatible with every modern device, from Android and iOS to Windows and macOS. SnapYT uses cutting-edge technology to ensure that your conversions are fast and secure. We skip the waiting time so you can get your files instantly. Best of all, every download via SnapYT is guaranteed safe—completely free of malware or unwanted threats.</p>
+
+    <div class="features-grid">
+      <div class="f-item">
+        <h4>⚡ Unlimited Access</h4>
+        <p>Convert and download as many YouTube videos as you like without any restrictions.</p>
+      </div>
+      <div class="f-item">
+        <h4>🚀 Ultra-Fast Processing</h4>
+        <p>Our optimized system completes conversions in seconds, even for high-resolution 4K files.</p>
+      </div>
+      <div class="f-item">
+        <h4>🔒 Safe & Private</h4>
+        <p>We prioritize your security. Use our service anonymously without any registration required.</p>
+      </div>
+    </div>
+
+    <h2>How to download YouTube videos with SnapYT?</h2>
+    <p>1. Copy your desired YouTube URL and paste it into the search box above.</p>
+    <p>2. Hit the "Start" button and wait a brief moment for the formats to load.</p>
+    <p>3. Choose the resolution (MP4) or audio quality (MP3) you want and click "DOWNLOAD".</p>
+
+    <div class="faq-section" id="faq">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-item">
+        <h3>What is SnapYT?</h3>
+        <p>SnapYT is a secure web utility that allows you to easily download YouTube videos and audio in high quality for free.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Is SnapYT free for everyone?</h3>
+        <p>Absolutely. You don't have to pay a single cent to convert and save your favorite YouTube content to your device.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Can SnapYT download 4K video?</h3>
+        <p>Yes, we support a wide range of quality settings up to 4K resolution, provided the original video has it available.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Is it compatible with my mobile device?</h3>
+        <p>Yes, SnapYT works flawlessly in all mobile browsers on both Android and iOS systems.</p>
+      </div>
+    </div>
+
+    <div style="margin-top: 40px; font-size: 13px; color: var(--muted); border: 1px solid var(--border); padding: 20px; border-radius: 10px;">
+       <strong>Having trouble downloading? Follow these steps:</strong><br>
+       1. Select your format and click the Download button.<br>
+       2. If the video plays instead of downloading, press "CTRL + S" or right-click the video player and choose "Save Video As...".
+    </div>
+  </section>
+</div>
+
+<!-- DOWNLOAD OVERLAY -->
+<div class="overlay" id="dlOverlay">
+  <div class="overlay-content" style="position: relative;">
+    <button onclick="document.getElementById('dlOverlay').classList.remove('active'); if(typeof isDownloading !== 'undefined') isDownloading = false;" style="position: absolute; right: 15px; top: 15px; background: transparent; border: none; font-size: 24px; color: var(--muted); cursor: pointer;">&times;</button>
+    <h2 id="ovTitle">Processing...</h2>
+    <p id="ovSub" style="color: var(--muted); margin: 15px 0;">Please wait while we prepare your file.</p>
+    <div style="height: 6px; background: var(--border); border-radius: 10px; overflow: hidden; margin: 20px 0;">
+      <div id="progBar" style="width: 0%; height: 100%; background: var(--accent); transition: 0.3s;"></div>
+    </div>
+    
+    <!-- Sponsor Ad in Processing Overlay -->
+    <a href="https://www.profitablecpmratenetwork.com/pczup5wwv5?key=db047e465fbcc98ebed7e03391257f5f" target="_blank" style="display: block; background: rgba(237,53,53,0.1); border: 1px dashed var(--accent); padding: 15px; border-radius: 10px; text-decoration: none; margin-bottom: 20px; font-size: 13px;">
+      <strong style="color: var(--accent); display: block; margin-bottom: 5px;">🌟 Sponsored Ad</strong>
+      <span style="color: var(--muted);">Click here to visit our sponsor while you wait.</span>
+    </a>
+
+    <div id="dlAction" style="display: none;">
+      <button onclick="triggerActualDownload()" style="background: var(--accent); color: #fff; border: none; padding: 12px 30px; border-radius: 10px; font-weight: 700; cursor: pointer; width: 100%;">Download Now</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div style="margin-bottom: 20px;">
+    <a href="/about">About Us</a> | 
+    <a href="#faq">FAQ</a> | 
+    <a href="/contact">Contact Us</a> | 
+    <a href="/terms">Terms of Service</a> | 
+    <a href="/privacy">Privacy Policy</a>
+  </div>
+  <p>&copy; 2026 SnapYT - The best YouTube Downloader. All rights reserved.</p>
+</footer>
+
+<script src="/scripts/main.js"></script>
+</body>
+</html>

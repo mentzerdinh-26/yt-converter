@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://snapyt2mp4.click/</loc>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://snapyt2mp4.click/vi"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://snapyt2mp4.click/en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://snapyt2mp4.click/en"/>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://snapyt2mp4.click/vi</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://snapyt2mp4.click/en"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://snapyt2mp4.click/vi"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://snapyt2mp4.click/en"/>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://snapyt2mp4.click/youtube-to-mp4</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://snapyt2mp4.click/youtube-to-mp3</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://snapyt2mp4.click/about</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://snapyt2mp4.click/contact</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://snapyt2mp4.click/terms</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://snapyt2mp4.click/privacy</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+</urlset>
