@@ -124,34 +124,63 @@ async function startDownload(type, q) {
   ovTitle.textContent = t.processing;
   dlBtnText.textContent = t.btnDownload;
 
-  let p = 0;
-  const interval = setInterval(() => {
-    p += Math.random() * 15;
-    if (p > 90) p = 90;
-    bar.style.width = p + '%';
-    ovTitle.textContent = `${t.processing} ${p.toFixed(0)}%`;
-  }, 400);
-
   try {
+    // Step 1: Start conversion (returns immediately with jobId)
     const url = type === 'video' ? `/api/convert/video?id=${currentRequestId}&quality=${q}` : `/api/convert/audio?id=${currentRequestId}`;
     const res = await fetch(url);
     if (!res.ok) throw new Error(t.fail);
-    
+
     const { jobId } = await res.json();
     currentJobId = jobId;
-    
-    clearInterval(interval);
+
+    // Step 2: Poll for job status with real progress
+    await pollJobStatus(jobId, bar, ovTitle);
+
     bar.style.width = '100%';
     ovTitle.textContent = t.ready;
     action.style.display = 'block';
-    
+
   } catch (e) {
-    alert(e.message);
+    alert(e.message || t.fail);
     overlay.classList.remove('active');
   } finally {
     isDownloading = false;
-    clearInterval(interval);
   }
+}
+
+function pollJobStatus(jobId, bar, ovTitle) {
+  return new Promise((resolve, reject) => {
+    let fakeProgress = 0;
+    const poll = setInterval(async () => {
+      try {
+        const res = await fetch(`/api/status?jobId=${jobId}`);
+        if (!res.ok) { clearInterval(poll); return reject(new Error(t.fail)); }
+        const data = await res.json();
+
+        if (data.status === 'done') {
+          clearInterval(poll);
+          return resolve();
+        }
+        if (data.status === 'error') {
+          clearInterval(poll);
+          return reject(new Error(data.error || t.fail));
+        }
+
+        // Use real progress from server if available, otherwise fake it
+        let displayProgress = data.progress > 0 ? data.progress : fakeProgress;
+        fakeProgress += Math.random() * 5;
+        if (fakeProgress > 90) fakeProgress = 90;
+        displayProgress = Math.max(displayProgress, fakeProgress);
+        if (displayProgress > 99) displayProgress = 99;
+
+        bar.style.width = displayProgress.toFixed(0) + '%';
+        ovTitle.textContent = `${t.processing} ${displayProgress.toFixed(0)}%`;
+      } catch (err) {
+        clearInterval(poll);
+        reject(new Error(t.fail));
+      }
+    }, 1000);
+  });
 }
 
 function triggerActualDownload() {

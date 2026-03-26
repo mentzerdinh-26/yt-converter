@@ -46,29 +46,51 @@ app.get("/contact", (req, res) => res.sendFile(path.join(__dirname, "apps/web/pa
 app.get("/terms", (req, res) => res.sendFile(path.join(__dirname, "apps/web/pages", "terms.html")));
 app.get("/privacy", (req, res) => res.sendFile(path.join(__dirname, "apps/web/pages", "privacy.html")));
 
+// Load keyword database for SEO pages
+const keywords = require("./data/keywords.json");
+const keywordMap = new Map(keywords.map(k => [k.slug, k.keyword]));
+
 // Dynamic SEO Pages (Programmatic)
 app.get("/:slug", (req, res) => {
     const slug = req.params.slug;
-    
+
     // Ignore static files, api routes, or our generic routes
     if (slug.includes('.') || slug === 'api' || slug === 'scripts' || slug === 'styles') {
-        return res.status(404).sendFile(path.join(__dirname, "apps/web/pages", "index.html")); // Fallback
+        return res.status(404).sendFile(path.join(__dirname, "apps/web/pages", "index.html"));
     }
 
-    // Convert slug to keyword: youtube-to-mp3 -> Youtube To Mp3
-    const keyword = slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-    
+    // Use keyword from database, fallback to slug conversion
+    const keyword = keywordMap.get(slug) || slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    const keywordLower = keyword.toLowerCase();
+
     const templatePath = path.join(__dirname, "apps/web/pages/seo", "template.html");
     fs.readFile(templatePath, 'utf8', (err, data) => {
         if (err) return res.status(500).send("Error loading SEO template");
-        
-        // Placeholder content for M1
-        const content = `<p>Use SnapYT to download the best ${keyword} videos in HD quality. Fast, free, and secure.</p>`;
-        
+
+        // Generate SEO content paragraphs
+        const content = `
+          <p>Looking for the best way to <strong>${keywordLower}</strong>? SnapYT is your go-to tool for downloading YouTube videos in MP4 and MP3 formats. Our free online converter makes it easy to save any YouTube video in HD quality — no software installation required.</p>
+          <p>Whether you need ${keywordLower} on your phone, tablet, or computer, SnapYT works seamlessly across all devices and browsers. Simply paste a YouTube URL, choose your preferred format and quality, and download instantly.</p>
+          <p>SnapYT supports resolutions up to 4K for video and up to 320kbps for MP3 audio. All conversions are fast, secure, and completely free with no limits on the number of downloads.</p>`;
+
+        // Generate internal links to related pages
+        const relatedPages = keywords
+          .filter(k => k.slug !== slug)
+          .sort(() => Math.random() - 0.5)
+          .slice(0, 5);
+        const internalLinks = `<div style="margin-top: 40px; padding: 20px; border: 1px solid var(--border); border-radius: 10px;">
+          <h3>Related Tools</h3>
+          ${relatedPages.map(k => `<a href="/${k.slug}" style="display: inline-block; margin: 5px 10px 5px 0; color: var(--accent); text-decoration: none;">${k.keyword}</a>`).join('')}
+          <br><a href="/" style="margin-top: 10px; display: inline-block; color: var(--accent); text-decoration: none;">Back to Homepage</a>
+        </div>`;
+
         const html = data
             .replace(/{{keyword}}/g, keyword)
-            .replace(/{{content}}/g, content);
-            
+            .replace(/{{keyword_lower}}/g, keywordLower)
+            .replace(/{{slug}}/g, slug)
+            .replace(/{{content}}/g, content)
+            .replace(/{{internal_links}}/g, internalLinks);
+
         res.send(html);
     });
 });
@@ -77,14 +99,31 @@ app.get("/:slug", (req, res) => {
 // API Endpoints
 const TEMP_DIR = path.join(__dirname, "temp");
 if (!fs.existsSync(TEMP_DIR)) fs.mkdirSync(TEMP_DIR, { recursive: true });
-const ytDlpBinary = path.join(__dirname, process.platform === "win32" ? "yt-dlp.exe" : "yt-dlp");
+
+// Use system yt-dlp if available, fallback to local binary
+const { execSync } = require("child_process");
+let ytDlpBinary;
+try {
+  ytDlpBinary = execSync("which yt-dlp", { encoding: "utf8" }).trim();
+} catch {
+  ytDlpBinary = path.join(__dirname, process.platform === "win32" ? "yt-dlp.exe" : "yt-dlp");
+}
 const ytDlp = new YTDlpWrap(ytDlpBinary);
+
+// Detect system ffmpeg location for yt-dlp
+let ffmpegDir = "";
+try {
+  const ffmpegPath = execSync("which ffmpeg", { encoding: "utf8" }).trim();
+  ffmpegDir = path.dirname(ffmpegPath);
+} catch {}
 
 app.post("/api/info", async (req, res) => {
   const { url } = req.body;
   if (!url) return res.status(400).json({ error: "Missing URL" });
   try {
-    const stdout = await ytDlp.execPromise([url, "--dump-json", "--no-playlist", "--no-warnings", "--user-agent", getSRUA()]);
+    const args = [url, "--dump-json", "--no-playlist", "--no-warnings", "--user-agent", getSRUA()];
+    if (ffmpegDir) args.push("--ffmpeg-location", ffmpegDir);
+    const stdout = await ytDlp.execPromise(args);
     const info = JSON.parse(stdout);
     const allFormats = info.formats || [];
     const videoFormats = [];
@@ -92,8 +131,7 @@ app.post("/api/info", async (req, res) => {
         const m = allFormats.find(f => f.vcodec !== "none" && f.height === h);
         if (m) videoFormats.push({ quality: h, qualityLabel: `${h}p`, filesize: (m.filesize || m.filesize_approx || 0) });
     });
-    
-    // Fix: Provide a fallback bestAudio if vcodec == none filtering fails due to yt-dlp changes
+
     let bestAudio = allFormats.filter(f => f.acodec !== "none" && f.vcodec === "none").sort((a,b) => (b.abr||0)-(a.abr||0))[0];
     if (!bestAudio && allFormats.some(f => f.acodec !== "none")) {
         bestAudio = { quality: 'bestaudio', abr: 128 };
@@ -107,62 +145,141 @@ app.post("/api/info", async (req, res) => {
 
 const activeJobs = new Map();
 
-app.get("/api/convert/video", async (req, res) => {
+// Helper: sanitize filename for safe downloads
+function sanitizeFilename(name) {
+  return name.replace(/[<>:"/\\|?*\x00-\x1f]/g, '_').substring(0, 200);
+}
+
+// Helper: find the actual output file (yt-dlp may alter extensions)
+function findOutputFile(basePath, ext) {
+  if (fs.existsSync(basePath)) return basePath;
+  // Check for common yt-dlp output variations
+  const dir = path.dirname(basePath);
+  const base = path.basename(basePath, ext);
+  const candidates = [
+    basePath,
+    path.join(dir, base + ext),
+    path.join(dir, base + ".mkv"),
+    path.join(dir, base + ".webm"),
+  ];
+  for (const c of candidates) {
+    if (fs.existsSync(c)) return c;
+  }
+  // Glob fallback: find any file matching the jobId prefix
+  try {
+    const files = fs.readdirSync(dir).filter(f => f.startsWith(base));
+    if (files.length > 0) return path.join(dir, files[0]);
+  } catch {}
+  return null;
+}
+
+// Async convert: returns jobId immediately, processes in background
+app.get("/api/convert/video", (req, res) => {
   const { id, quality } = req.query;
   const cached = requestCache.get(id);
   if (!cached) return res.status(404).json({ error: "Expired" });
-  
+
   const jobId = crypto.randomBytes(8).toString("hex");
   const tempOutput = path.join(TEMP_DIR, `${jobId}.mp4`);
-  
-  const args = [cached.url, "-f", `bestvideo[height<=${quality}][ext=mp4]+bestaudio[ext=m4a]/best[height<=${quality}]`, "--merge-output-format", "mp4", "-o", tempOutput, "--no-warnings", "--user-agent", getSRUA()];
-  
-  ytDlp.exec(args)
-    .on('close', (code) => {
-       if (fs.existsSync(tempOutput)) {
-           activeJobs.set(jobId, { status: "done", file: tempOutput, filename: `${cached.title}.mp4` });
-           res.json({ jobId });
-       } else {
-           res.status(500).json({ error: "Conversion failed. FFmpeg missing or video restricted." });
-       }
-    })
-    .on('error', () => {
-       res.status(500).json({ error: "Failed" });
-    });
+
+  // Return jobId immediately so client can poll
+  activeJobs.set(jobId, { status: "processing", file: null, filename: `${sanitizeFilename(cached.title)}.mp4` });
+  res.json({ jobId });
+
+  const args = [cached.url, "-f", `bestvideo[height<=${quality}]+bestaudio/best[height<=${quality}]`, "--merge-output-format", "mp4", "-o", tempOutput, "--no-warnings", "--user-agent", getSRUA()];
+  if (ffmpegDir) args.push("--ffmpeg-location", ffmpegDir);
+
+  const proc = ytDlp.exec(args);
+
+  // Parse progress from yt-dlp stderr
+  let lastProgress = 0;
+  proc.on('progress', (progress) => {
+    if (progress && progress.percent) {
+      lastProgress = Math.min(progress.percent, 99);
+      const job = activeJobs.get(jobId);
+      if (job) job.progress = lastProgress;
+    }
+  });
+
+  proc.on('close', (code) => {
+    const actualFile = findOutputFile(tempOutput, ".mp4");
+    if (actualFile) {
+      activeJobs.set(jobId, { status: "done", file: actualFile, filename: `${sanitizeFilename(cached.title)}.mp4`, progress: 100 });
+    } else {
+      activeJobs.set(jobId, { status: "error", error: "Conversion failed. FFmpeg missing or video restricted.", progress: 0 });
+    }
+  });
+
+  proc.on('error', (err) => {
+    activeJobs.set(jobId, { status: "error", error: err.message || "Failed", progress: 0 });
+  });
 });
 
-app.get("/api/convert/audio", async (req, res) => {
+app.get("/api/convert/audio", (req, res) => {
   const { id } = req.query;
   const cached = requestCache.get(id);
   if (!cached) return res.status(404).json({ error: "Expired" });
-  
+
   const jobId = crypto.randomBytes(8).toString("hex");
   const tempOutput = path.join(TEMP_DIR, `${jobId}.mp3`);
-  
+
+  // Return jobId immediately
+  activeJobs.set(jobId, { status: "processing", file: null, filename: `${sanitizeFilename(cached.title)}.mp3` });
+  res.json({ jobId });
+
   const args = [cached.url, "-f", "bestaudio", "-x", "--audio-format", "mp3", "-o", tempOutput, "--no-warnings", "--user-agent", getSRUA()];
-  
-  ytDlp.exec(args)
-    .on('close', (code) => {
-       if (fs.existsSync(tempOutput)) {
-           activeJobs.set(jobId, { status: "done", file: tempOutput, filename: `${cached.title}.mp3` });
-           res.json({ jobId });
-       } else {
-           res.status(500).json({ error: "Conversion failed. Please try a different video." });
-       }
-    })
-    .on('error', () => {
-       res.status(500).json({ error: "Failed" });
-    });
+  if (ffmpegDir) args.push("--ffmpeg-location", ffmpegDir);
+
+  const proc = ytDlp.exec(args);
+
+  let lastProgress = 0;
+  proc.on('progress', (progress) => {
+    if (progress && progress.percent) {
+      lastProgress = Math.min(progress.percent, 99);
+      const job = activeJobs.get(jobId);
+      if (job) job.progress = lastProgress;
+    }
+  });
+
+  proc.on('close', (code) => {
+    const actualFile = findOutputFile(tempOutput, ".mp3");
+    if (actualFile) {
+      activeJobs.set(jobId, { status: "done", file: actualFile, filename: `${sanitizeFilename(cached.title)}.mp3`, progress: 100 });
+    } else {
+      activeJobs.set(jobId, { status: "error", error: "Conversion failed. Please try a different video.", progress: 0 });
+    }
+  });
+
+  proc.on('error', (err) => {
+    activeJobs.set(jobId, { status: "error", error: err.message || "Failed", progress: 0 });
+  });
+});
+
+// Polling endpoint for job status
+app.get("/api/status", (req, res) => {
+  const job = activeJobs.get(req.query.jobId);
+  if (!job) return res.status(404).json({ error: "Job not found" });
+  res.json({ status: job.status, progress: job.progress || 0, error: job.error || null });
 });
 
 app.get("/api/file", (req, res) => {
    const job = activeJobs.get(req.query.jobId);
    if (!job || job.status !== 'done') return res.status(404).send("File not ready");
-   
+
    res.download(job.file, job.filename, (err) => {
        try { fs.unlinkSync(job.file); } catch(e){}
        activeJobs.delete(req.query.jobId);
    });
 });
+
+// Cleanup stale jobs every 10 minutes
+setInterval(() => {
+  for (const [jobId, job] of activeJobs) {
+    if (job.status === "done" || job.status === "error") {
+      if (job.file) try { fs.unlinkSync(job.file); } catch(e){}
+      activeJobs.delete(jobId);
+    }
+  }
+}, 10 * 60 * 1000);
 
 app.listen(3000, () => console.log("🚀 Server running at http://localhost:3000"));
