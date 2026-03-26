@@ -133,10 +133,16 @@ async function startDownload(type, q) {
     const { jobId } = await res.json();
     currentJobId = jobId;
 
-    // Step 2: Poll for job status with real progress
-    await pollJobStatus(jobId, bar, ovTitle);
+    // Step 2: Simulate progress gradually up to 85%
+    await fakeProgress(bar, ovTitle);
 
-    bar.style.width = '100%';
+    // Step 3: Show ad and wait for it to load
+    ovTitle.textContent = t.processing + ' 85%';
+    await showAdAndWait();
+
+    // Step 4: Fast-forward to 100%
+    await fastForwardProgress(bar, ovTitle, 85);
+
     ovTitle.textContent = t.ready;
     action.style.display = 'block';
 
@@ -148,47 +154,98 @@ async function startDownload(type, q) {
   }
 }
 
-function pollJobStatus(jobId, bar, ovTitle) {
-  return new Promise((resolve, reject) => {
-    let fakeProgress = 0;
-    const poll = setInterval(async () => {
-      try {
-        const res = await fetch(`/api/status?jobId=${jobId}`);
-        if (!res.ok) { clearInterval(poll); return reject(new Error(t.fail)); }
-        const data = await res.json();
+function fakeProgress(bar, ovTitle) {
+  return new Promise((resolve) => {
+    let progress = 0;
+    const steps = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85];
+    let stepIndex = 0;
 
-        if (data.status === 'done') {
-          clearInterval(poll);
-          return resolve();
-        }
-        if (data.status === 'error') {
-          clearInterval(poll);
-          return reject(new Error(data.error || t.fail));
-        }
-
-        // Use real progress from server if available, otherwise fake it
-        let displayProgress = data.progress > 0 ? data.progress : fakeProgress;
-        fakeProgress += Math.random() * 5;
-        if (fakeProgress > 90) fakeProgress = 90;
-        displayProgress = Math.max(displayProgress, fakeProgress);
-        if (displayProgress > 99) displayProgress = 99;
-
-        bar.style.width = displayProgress.toFixed(0) + '%';
-        ovTitle.textContent = `${t.processing} ${displayProgress.toFixed(0)}%`;
-      } catch (err) {
-        clearInterval(poll);
-        reject(new Error(t.fail));
+    const interval = setInterval(() => {
+      if (stepIndex >= steps.length) {
+        clearInterval(interval);
+        return resolve();
       }
-    }, 1000);
+      progress = steps[stepIndex];
+      bar.style.width = progress + '%';
+      ovTitle.textContent = `${t.processing} ${progress}%`;
+      stepIndex++;
+    }, 800);
   });
 }
 
-function triggerActualDownload() {
+function showAdAndWait() {
+  return new Promise((resolve) => {
+    triggerAd();
+    // Wait for ad to have time to load (5 seconds)
+    setTimeout(resolve, 5000);
+  });
+}
+
+function fastForwardProgress(bar, ovTitle, from) {
+  return new Promise((resolve) => {
+    let progress = from;
+    const interval = setInterval(() => {
+      progress += 5;
+      if (progress >= 100) {
+        progress = 100;
+        bar.style.width = '100%';
+        ovTitle.textContent = `${t.processing} 100%`;
+        clearInterval(interval);
+        return resolve();
+      }
+      bar.style.width = progress + '%';
+      ovTitle.textContent = `${t.processing} ${progress}%`;
+    }, 150);
+  });
+}
+
+async function triggerActualDownload() {
   triggerAd();
-  if (currentJobId) {
+  if (!currentJobId) return;
+
+  const ovTitle = document.getElementById('ovTitle');
+  const action = document.getElementById('dlAction');
+  const dlBtn = action.querySelector('button');
+
+  // Disable button while waiting for server
+  dlBtn.disabled = true;
+  ovTitle.textContent = t.processing;
+
+  // Wait until server-side conversion is actually done
+  try {
+    await waitForServerDone(currentJobId);
     window.location.href = `/api/file?jobId=${currentJobId}`;
+    document.getElementById('dlOverlay').classList.remove('active');
+  } catch (e) {
+    alert(e.message || t.fail);
+  } finally {
+    dlBtn.disabled = false;
   }
-  document.getElementById('dlOverlay').classList.remove('active');
+}
+
+function waitForServerDone(jobId) {
+  return new Promise((resolve, reject) => {
+    let attempts = 0;
+    const maxAttempts = 60; // max ~2 minutes
+    const check = async () => {
+      try {
+        const res = await fetch(`/api/status?jobId=${jobId}`);
+        if (!res.ok) return reject(new Error(t.fail));
+        const data = await res.json();
+
+        if (data.status === 'done') return resolve();
+        if (data.status === 'error') return reject(new Error(data.error || t.fail));
+
+        attempts++;
+        if (attempts >= maxAttempts) return reject(new Error(t.fail));
+
+        setTimeout(check, 2000);
+      } catch (err) {
+        reject(new Error(t.fail));
+      }
+    };
+    check();
+  });
 }
 
 
